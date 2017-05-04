@@ -9,6 +9,8 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import main.FishServer.fishFlusher;
+
 
 public class FishServerThread extends Thread {
     private final FishServer server;
@@ -54,7 +56,32 @@ public class FishServerThread extends Thread {
         	System.out.println(this.getName() + " has joined the game!");
         	
             String inputLine ="";
-            while ((inputLine=in.readLine())!= null) {
+            Boolean startfishing = false;
+            
+            
+            
+            while ((inputLine=in.readLine())!= null || (startfishing=FishServer.fishSaisonStart)==true) {
+            	
+            	if (startfishing==true){
+            		for (int a=5;a>=0;a--){
+        				
+            			if (a==0){
+                			out.write("Jetzt wird gefischt!\n");
+                		}
+                		else { 
+                			out.write("Es wird in " + a + " Sekunden gefischt!\n");
+                		}
+                		out.flush();
+            			
+            		try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+            		}
+            		startfishing = false;
+            		
+            	} else {
             	
                 PossibleActions action;
 
@@ -70,13 +97,20 @@ public class FishServerThread extends Thread {
                 }
 
                 double amount, costs, gains;
+                
 
                 switch(action){
                     case BUY:
+                    	if (arguments.length==2){
+                    	
                         amount = Double.parseDouble(arguments[1]);
                         costs = server.market1.buy(player, amount);
                         out.write(Double.toString(costs)+" bought!\n");
                         out.flush();
+                    	} else{
+                    		out.println("Wrong syntax BUY [AMOUNT]");
+                            out.flush();
+                    	}
                         break;
                     case SELL:
                     	if(arguments.length==2){
@@ -122,6 +156,7 @@ public class FishServerThread extends Thread {
                     default:
                         out.write("Action not yet implemented");
                 }
+            	}
 
                 
             }
@@ -136,4 +171,5 @@ public class FishServerThread extends Thread {
         } 
         
     }
+    
 }

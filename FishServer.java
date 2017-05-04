@@ -25,6 +25,7 @@ public class FishServer {
 
     static ConcurrentMap<Player, Double> fishingRates = new ConcurrentHashMap<>();
     static int playerCount = 0;
+    static boolean fishSaisonStart = false;
 
     public FishServer(Market market, FishPond pond) {
         this.market1 = market;
@@ -108,23 +109,45 @@ public class FishServer {
             while (true) {
             	if (fishingRates.size()==playerCount && playerCount>0) {
             		
-            		System.out.println(playerThread);
+            		fishSaisonStart = true;
+
+            		try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+            		}
+            		fishSaisonStart = false;
+            		
+            		System.out.println("fishingsaison starting");
+            		fish();
+            	}
+            }
+        }
+    }
+    
+    
+    
+    /*static class fishFlusher implements Runnable{
+        @Override
+        public void run() {
+            while (true) {
+            	if (fishingRates.size()==playerCount && playerCount>0) {
+            		
+            		System.out.println(playerThread.get(1));
             		
             		for (int a=5;a>=0;a--){
-            			
-            			for (int b=0;b<playerThread.size();b++){
             				
-            			playerThread.get(b).countdownFishing(a);
+            			FishServerThread.countdownFishing(a);
+            			
             		try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
             		}
-            		}
+            		System.out.println("fishingsaison starting");
             		fish();
             	}
             }
-        }
-    }
+        }*/
 }
