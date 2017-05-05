@@ -3,8 +3,10 @@ package main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ public class FishServer {
     Market market1;
     static FishPond pond;
     static List <FishServerThread> playerThread = new ArrayList();
+    static PrintWriter [] writer = new PrintWriter[100];
 
     static ConcurrentMap<Player, Double> fishingRates = new ConcurrentHashMap<>();
     static int playerCount = 0;
@@ -64,9 +67,12 @@ public class FishServer {
         try(ServerSocket serverSocket = new ServerSocket(server.port)){
         	int threadCount = 0;
         	while(server.listening){
-                playerThread.add(new FishServerThread(serverSocket.accept(), server));
+                Socket socket = serverSocket.accept();
+        		playerThread.add(new FishServerThread(socket, server));
                 playerThread.get(threadCount).start();
+                writer[threadCount] = new PrintWriter(socket.getOutputStream());
                 threadCount++;
+                
             }
         }  catch (IOException e) {
             e.printStackTrace();
@@ -114,13 +120,15 @@ public class FishServer {
             			
             			for (int b=0;b<playerThread.size();b++){
             				
-            			playerThread.get(b).countdownFishing(a);
+            			writer[b].write("Fishing starts in " + a + " seconds!\n");
+            			writer[b].flush();
+            			}
             		try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-            		}
+            		
             		}
             		fish();
             	}
