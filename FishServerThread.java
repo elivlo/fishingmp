@@ -17,12 +17,13 @@ public class FishServerThread extends Thread {
 
     static int playerCount = 0;
 
-    public FishServerThread(Socket accept, FishServer server) {
+    public FishServerThread(Socket accept, FishServer server, Player player) {
         super("FishServerThread");
         this.socket = accept;
         this.server = server;
-        this.player = new Player("Player "+playerCount++, 100, 0);
+        this.player = player;
         server.playerCount++;
+        FishServerThread.playerCount++;
     }
     public double getMaxFishPercentage() {
     	return 50/playerCount;
@@ -111,7 +112,7 @@ public class FishServerThread extends Thread {
                     case STATS:
                     	out.write(player.name +": \n\n");
                     	out.flush();
-                    	out.write("Price: " + server.market1.getPrice() + "\t" + "Population: " + server.pond.getPopulation() + "\n" + "Money: " + player.getCash() + "\t" + "Player: " + playerCount + "\tMax. %" + getMaxFishPercentage() + "\n");
+                    	out.write("Price: " + server.market1.getPrice() + "\t" + "Population: " + server.pond.getPopulation() + "\n" + "Money: " + player.getCash() + "\t" + "Fish: "+ player.fish + "\tPlayer: " + playerCount + "\tMax. % " + getMaxFishPercentage() + "\n");
                     	out.flush();
                     	break;
                     case leave:

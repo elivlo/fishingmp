@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
  */
 public class FishPond {
     double population;
-    private final double targetPopulation;
-    private double growthFactor;
+    public final double targetPopulation;
+    public double growthFactor;
 
     public FishPond(double startPopulation, double targetPopulation) {
         this(startPopulation,targetPopulation, 0.0005);
@@ -41,6 +41,6 @@ public class FishPond {
         population = newPopulation;
     }
     public double getPopulation() {
-    	return population;
+      return population;
     }
 }
